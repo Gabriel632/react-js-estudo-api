@@ -3,8 +3,6 @@ using RestWithASPNETErudio.Configurations;
 using RestWithASPNETErudio.Data.VO;
 using RestWithASPNETErudio.Repository;
 using RestWithASPNETErudio.Services;
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace RestWithASPNETErudio.Business.Implementations
@@ -24,14 +22,14 @@ namespace RestWithASPNETErudio.Business.Implementations
             _tokenService = tokenService;
         }
 
-        public TokenVO ValidateCredentials(UserVO userCredentials)
+        public TokenVO? ValidateCredentials(UserVO userCredentials)
         {
             var user = _repository.ValidateCredentials(userCredentials);
             if (user == null) return null;
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
+                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
+                new (JwtRegisteredClaimNames.UniqueName, user.UserName!)
             };
 
             var accessToken = _tokenService.GenerateAccessToken(claims);
